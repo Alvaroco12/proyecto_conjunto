@@ -1,3 +1,5 @@
+https://github.com/Alvaroco12/proyecto_conjunto.git
+
 # Proyecto CNN — Clasificación CIFAR-10 🧠📊
 
 Este proyecto implementa una **red neuronal convolucional (CNN)** para clasificar imágenes del dataset **CIFAR-10**, que contiene 10 categorías diferentes de objetos.
