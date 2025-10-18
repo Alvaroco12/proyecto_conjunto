@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<head>
+    <meta charset="UTF-8">
+    <title>CNN</title>
+</head>
+<body>
+    <h1>Selecciona una imagen</h1>
+    <form action="/predict" method="POST" enctype="multipart/form-data">
+        <input type="file" name="imagen" accept="image/*" required>
+        <button type="submit">Clasificar imagen</button>
+    </form>
+</body>
+</html>
