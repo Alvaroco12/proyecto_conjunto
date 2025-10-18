@@ -1,7 +1,8 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Input
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, Input
+from tensorflow.keras.utils import to_categorical
 from skimage import color
 
 class ModeloCNN:
@@ -14,26 +15,25 @@ class ModeloCNN:
         """Construye la arquitectura de la CNN"""
         self.model = Sequential([
             Input(shape=self.input_shape),
-
-            # Bloque convolucional 1
             Conv2D(32, (3,3), activation='relu', padding='same'),
             MaxPooling2D((2,2)),
-
-            # Bloque convolucional 2
             Conv2D(64, (3,3), activation='relu', padding='same'),
             MaxPooling2D((2,2)),
-
-            # Clasificador
+            Conv2D(128, (3,3), activation='relu', padding='same'),
+            MaxPooling2D((2,2)),
             Flatten(),
-            Dense(64, activation='relu'),
+            Dense(128, activation='relu'),
+            Dropout(0.4),
             Dense(self.num_classes, activation='softmax')
         ])
+        self.model.compile(optimizer='adam',
+                           loss='categorical_crossentropy',
+                           metrics=['accuracy'])
 
-        self.model.compile(
-            optimizer='adam',
-            loss='categorical_crossentropy',
-            metrics=['accuracy']
-        )
+    def entrenar(self, x_train, y_train, epochs=15, batch_size=64):
+        """Entrena el modelo con los datos proporcionados"""
+        self.model.fit(x_train, y_train, epochs=epochs,
+                       batch_size=batch_size, validation_split=0.1)
 
     def guardar(self, ruta):
         """Guarda el modelo en un archivo .h5"""
@@ -46,7 +46,7 @@ class ModeloCNN:
     def preprocesar_imagen(self, img):
         """Convierte imagen RGB a gris, la redimensiona y la adapta al input del modelo"""
         from skimage.transform import resize
-        if img.shape[-1] == 3:
+        if img.shape[-1] == 3:  # si tiene canales RGB
             img = color.rgb2gray(img)
         img = resize(img, (self.input_shape[0], self.input_shape[1]))
         img = img.reshape(1, *self.input_shape)
